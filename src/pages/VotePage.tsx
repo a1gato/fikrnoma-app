@@ -60,7 +60,7 @@ export const VotePage: React.FC = () => {
     };
 
     const teachers = selectedClass ? TEACHERS_BY_CLASS[selectedClass] : [];
-    const classOptions = CLASSES.map((cls: string) => ({ value: cls, label: `${cls}-Sinf` }));
+    const classOptions = CLASSES.map((cls: string) => ({ value: cls, label: cls }));
 
     if (submitted) {
         return (
