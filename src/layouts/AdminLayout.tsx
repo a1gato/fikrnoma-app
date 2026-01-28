@@ -12,7 +12,7 @@ export const AdminLayout = () => {
     return (
         <div className="flex min-h-screen">
             <Sidebar />
-            <main className="flex-1 ml-72 p-4">
+            <main className="flex-1 p-8">
                 <Outlet />
             </main>
         </div>
