@@ -40,7 +40,7 @@ export const Sidebar = () => {
                 {/* Classes Section */}
                 <div>
                     <h3 className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <BookOpen size={12} />
+                        <BookOpen className="text-primary" size={12} />
                         {t('sidebar_classes')}
                     </h3>
                     <div className="space-y-1">
@@ -55,7 +55,7 @@ export const Sidebar = () => {
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`w-2 h-2 rounded-full ${location.pathname === `/admin/class/${cls}` ? 'bg-primary' : 'bg-slate-200 group-hover:bg-primary'}`} />
-                                    {cls} {t('select_class_view')}
+                                    {cls}
                                 </div>
                                 <ChevronRight size={14} className={location.pathname === `/admin/class/${cls}` ? 'text-primary' : 'opacity-0 group-hover:opacity-100 text-primary transition-all'} />
                             </Link>
