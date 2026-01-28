@@ -21,7 +21,7 @@ export const VotePage: React.FC = () => {
             setSubmitting(true);
             try {
                 // Submit each teacher rating individually
-                const submissionPromises = Object.entries(ratings).map(([teacherId, score]) => {
+                const submissionPromises = Object.entries(ratings).map(([teacherId, score]: [string, number]) => {
                     if (score > 0) {
                         return RatingService.submitRating(teacherId, selectedClass, score, comments[teacherId]);
                     }
@@ -57,7 +57,7 @@ export const VotePage: React.FC = () => {
     };
 
     const teachers = selectedClass ? TEACHERS_BY_CLASS[selectedClass] : [];
-    const classOptions = CLASSES.map(cls => ({ value: cls, label: `${cls}-Sinf` }));
+    const classOptions = CLASSES.map((cls: string) => ({ value: cls, label: `${cls}-Sinf` }));
 
     if (submitted) {
         return (
@@ -136,7 +136,7 @@ export const VotePage: React.FC = () => {
                                     O'qituvchilarni baholang
                                 </h2>
 
-                                {teachers.map((teacher) => (
+                                {teachers.map((teacher: any) => (
                                     <div key={teacher.id} className="teacher-card space-y-6 animate-fade-up">
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -148,7 +148,7 @@ export const VotePage: React.FC = () => {
                                         <div className="space-y-4">
                                             <p className="text-sm text-slate-400 italic">Dars o'tilishi haqidagi fikrlaringizni kiriting:</p>
                                             <div className="flex justify-between items-center max-w-sm mx-auto">
-                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                {[1, 2, 3, 4, 5].map((star: number) => (
                                                     <div key={star} className="flex flex-col items-center gap-2">
                                                         <span className="text-[10px] font-bold text-slate-500">{star}</span>
                                                         <button

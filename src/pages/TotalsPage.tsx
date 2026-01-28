@@ -34,7 +34,7 @@ export const TotalsPage = () => {
 
     const monthOptions = [
         { value: 'all', label: 'Barcha oylar' },
-        ...MONTHS.map((m, i) => ({ value: i.toString(), label: m }))
+        ...MONTHS.map((m: string, i: number) => ({ value: i.toString(), label: m }))
     ];
 
     return (
@@ -129,7 +129,7 @@ export const TotalsPage = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            ) : filteredTeachers.map((name, index) => {
+                            ) : filteredTeachers.map((name: string, index: number) => {
                                 const teacherStats = stats?.[name];
                                 if (!teacherStats) return null;
 
@@ -137,7 +137,7 @@ export const TotalsPage = () => {
                                 let totalCount = 0;
 
                                 // Calculate yearly totals
-                                MONTHS.forEach((_, mIndex) => {
+                                MONTHS.forEach((_: string, mIndex: number) => {
                                     totalSum += teacherStats[mIndex].sum;
                                     totalCount += teacherStats[mIndex].count;
                                 });
@@ -155,7 +155,7 @@ export const TotalsPage = () => {
                                         </td>
 
                                         {selectedMonth === 'all' ? (
-                                            MONTHS.map((_, mIndex) => {
+                                            MONTHS.map((_: string, mIndex: number) => {
                                                 const monthData = teacherStats[mIndex];
                                                 const avg = monthData.count > 0 ? (monthData.sum / monthData.count).toFixed(1) : '-';
 
