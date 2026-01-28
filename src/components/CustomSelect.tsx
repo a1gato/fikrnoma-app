@@ -15,6 +15,8 @@ interface CustomSelectProps {
     disabled?: boolean;
 }
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 export const CustomSelect: React.FC<CustomSelectProps> = ({
     options,
     value,
@@ -23,6 +25,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
     label,
     disabled
 }) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const containerRef = useRef<HTMLDivElement>(null);
@@ -58,13 +61,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-60 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-fade-up max-h-[300px] flex flex-col">
+                <div className="absolute top-full left-0 mt-2 w-full min-w-[240px] bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-fade-up max-h-[300px] flex flex-col">
                     <div className="p-3 border-b border-slate-100 sticky top-0 bg-white/50 backdrop-blur-md">
                         <div className="relative">
                             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                             <input
                                 type="text"
-                                placeholder="Qidirish..."
+                                placeholder={t('search_placeholder')}
                                 className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:border-primary/30 transition-all text-slate-900"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -94,7 +97,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                             ))
                         ) : (
                             <div className="px-4 py-8 text-center text-sm text-slate-400 italic">
-                                Natija topilmadi
+                                {t('no_results')}
                             </div>
                         )}
                     </div>

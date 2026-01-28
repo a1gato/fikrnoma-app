@@ -42,7 +42,9 @@ export const translations = {
         ],
         all_months: 'Barcha oylar',
         subject: 'O\'qituvchi',
-        back_to_vote: 'Ovoz berishga qaytish'
+        back_to_vote: 'Ovoz berishga qaytish',
+        search_placeholder: 'Qidirish...',
+        no_results: 'Natija topilmadi'
     },
     ru: {
         system_name: 'СИСТЕМА ШКОЛЬНОЙ ОБРАТНОЙ СВЯЗИ',
@@ -85,7 +87,9 @@ export const translations = {
         ],
         all_months: 'Все месяцы',
         subject: 'Учитель',
-        back_to_vote: 'Вернуться к голосованию'
+        back_to_vote: 'Вернуться к голосованию',
+        search_placeholder: 'Поиск...',
+        no_results: 'Ничего не найдено'
     },
     en: {
         system_name: 'SCHOOL FEEDBACK SYSTEM',
@@ -128,6 +132,8 @@ export const translations = {
         ],
         all_months: 'All months',
         subject: 'Teacher',
-        back_to_vote: 'Back to voting'
+        back_to_vote: 'Back to voting',
+        search_placeholder: 'Search...',
+        no_results: 'No results found'
     }
 };
