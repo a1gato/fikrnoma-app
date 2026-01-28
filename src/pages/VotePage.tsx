@@ -90,7 +90,7 @@ export const VotePage: React.FC = () => {
                         {t('system_name')}
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                        {selectedClass ? `${selectedClass}-${t('select_class_view')}` : t('select_class')}
+                        {selectedClass ? selectedClass : t('select_class')}
                     </h1>
                     <p className="text-slate-400 text-lg max-w-lg mx-auto">
                         {t('header_subtitle')}
