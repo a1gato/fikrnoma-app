@@ -1,9 +1,5 @@
+```json
 {
-    "github": {
-        "silent": true
-    },
-    "cleanUrls": true,
-    "framework": "vite",
     "rewrites": [
         {
             "source": "/(.*)",
@@ -11,3 +7,4 @@
         }
     ]
 }
+```
