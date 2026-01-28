@@ -327,6 +327,7 @@ export const TEACHERS_BY_CLASS: Record<ClassName, Teacher[]> = {
 export interface Rating {
     id: string;
     teacherId: string;
+    studentName?: string;
     className: ClassName;
     score: number; // 1-5
     comment?: string;

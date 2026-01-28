@@ -22,6 +22,7 @@ export const RatingService = {
         return data.map(r => ({
             id: r.id,
             teacherId: r.teacher_id,
+            studentName: r.student_name,
             className: r.class_name,
             score: r.score,
             comment: r.comment,
@@ -29,7 +30,7 @@ export const RatingService = {
         }));
     },
 
-    submitRating: async (teacherId: string, className: any, score: number, comment?: string) => {
+    submitRating: async (teacherId: string, className: any, score: number, studentName?: string, comment?: string) => {
         const { error } = await supabase
             .from('ratings')
             .insert([
@@ -37,6 +38,7 @@ export const RatingService = {
                     teacher_id: teacherId,
                     class_name: className,
                     score: score,
+                    student_name: studentName,
                     comment: comment
                 }
             ]);

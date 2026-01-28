@@ -26,7 +26,7 @@ export const VotePage: React.FC = () => {
                 // Submit each teacher rating individually
                 const submissionPromises = Object.entries(ratings).map(([teacherId, score]: [string, number]) => {
                     if (score > 0) {
-                        return RatingService.submitRating(teacherId, selectedClass, score, comments[teacherId]);
+                        return RatingService.submitRating(teacherId, selectedClass, score, studentName, comments[teacherId]);
                     }
                     return Promise.resolve();
                 });
@@ -44,6 +44,7 @@ export const VotePage: React.FC = () => {
                     setSelectedClass('');
                 }, 5000);
             } catch (error) {
+                console.error('Submission error:', error);
                 alert("Xatolik yuz berdi. Iltimos qaytadan urunib ko'ring.");
             } finally {
                 setSubmitting(false);
