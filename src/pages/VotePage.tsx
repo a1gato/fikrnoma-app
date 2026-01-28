@@ -23,15 +23,20 @@ export const VotePage: React.FC = () => {
         if (selectedClass && Object.keys(ratings).length > 0) {
             setSubmitting(true);
             try {
-                // Submit each teacher rating individually
-                const submissionPromises = Object.entries(ratings).map(([teacherId, score]: [string, number]) => {
-                    if (score > 0) {
-                        return RatingService.submitRating(teacherId, selectedClass, score, studentName, comments[teacherId]);
-                    }
-                    return Promise.resolve();
-                });
+                // Submit all ratings in a single batch request for better performance
+                const batchData = Object.entries(ratings)
+                    .filter(([_, score]) => score > 0)
+                    .map(([teacherId, score]) => ({
+                        teacherId,
+                        className: selectedClass,
+                        score,
+                        studentName,
+                        comment: comments[teacherId]
+                    }));
 
-                await Promise.all(submissionPromises);
+                if (batchData.length > 0) {
+                    await RatingService.submitRatings(batchData);
+                }
 
                 setSubmitted(true);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -44,9 +49,10 @@ export const VotePage: React.FC = () => {
                     setSelectedClass('');
                 }, 5000);
             } catch (error) {
-                console.error('Submission error:', error);
+                console.error('General submission error:', error);
                 alert("Xatolik yuz berdi. Iltimos qaytadan urunib ko'ring.");
             } finally {
+                console.log('Submission process ended');
                 setSubmitting(false);
             }
         }
