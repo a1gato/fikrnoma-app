@@ -147,8 +147,8 @@ export const ClassRatings = () => {
 
                                                     {teacher.ratings.length > 0 ? (
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {teacher.ratings.map((r, i) => (
-                                                                <div key={r.id} className="bg-white border border-slate-200 p-5 rounded-2xl animate-fade-up shadow-sm" style={{ animationDelay: `${i * 0.05}s` }}>
+                                                            {teacher.ratings.filter((r: any) => r.comment).map((r: any, i: number) => (
+                                                                <div key={i} className="flex gap-4 p-5 rounded-2xl bg-white border border-slate-100 group/comment transition-all hover:border-primary/20 hover:shadow-md hover:shadow-primary/5" style={{ animationDelay: `${i * 0.05}s` }}>
                                                                     <div className="flex justify-between items-start mb-3">
                                                                         <div className="flex gap-1">
                                                                             {[1, 2, 3, 4, 5].map(s => (
