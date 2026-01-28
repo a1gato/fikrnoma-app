@@ -13,7 +13,7 @@ export const LanguageSwitcher: React.FC = () => {
     ];
 
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex items-center gap-2 bg-white/80 backdrop-blur-xl border border-slate-200 p-1.5 rounded-2xl shadow-2xl shadow-primary/10">
+        <div className="fixed top-6 right-6 z-[100] flex items-center gap-2 bg-white/90 backdrop-blur-xl border border-slate-200 p-1.5 rounded-2xl shadow-2xl shadow-primary/10">
             <div className="p-2 text-primary">
                 <Globe size={18} />
             </div>
@@ -26,7 +26,6 @@ export const LanguageSwitcher: React.FC = () => {
                             ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
                             : 'hover:bg-slate-100 text-slate-500'}`}
                 >
-                    <span className="text-base">{lang.flag}</span>
                     {lang.label}
                 </button>
             ))}
