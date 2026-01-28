@@ -9,7 +9,10 @@ const MONTHS = [
     'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'
 ];
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 export const TotalsPage = () => {
+    const { t } = useLanguage();
     const [year, setYear] = useState(new Date().getFullYear());
     const [selectedMonth, setSelectedMonth] = useState<string>(new Date().getMonth().toString());
     const [searchTerm, setSearchTerm] = useState('');
@@ -33,8 +36,8 @@ export const TotalsPage = () => {
     );
 
     const monthOptions = [
-        { value: 'all', label: 'Barcha oylar' },
-        ...MONTHS.map((m: string, i: number) => ({ value: i.toString(), label: m }))
+        { value: 'all', label: t('all_months') },
+        ...t('months').map((m: string, i: number) => ({ value: i.toString(), label: m }))
     ];
 
     return (
@@ -43,9 +46,9 @@ export const TotalsPage = () => {
                 <div>
                     <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tight flex items-center gap-3">
                         <FileSpreadsheet className="text-primary" size={40} />
-                        Jami Ko'rsatkichlar
+                        {t('admin_totals_title')}
                     </h1>
-                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">O'qituvchilarning oylik o'rtacha ballari</p>
+                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">{t('admin_totals_subtitle')}</p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
@@ -54,7 +57,7 @@ export const TotalsPage = () => {
                             options={monthOptions}
                             value={selectedMonth}
                             onChange={(val) => setSelectedMonth(val)}
-                            placeholder="Oyni tanlang"
+                            placeholder={t('select_month')}
                         />
                     </div>
 
@@ -62,7 +65,7 @@ export const TotalsPage = () => {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
                         <input
                             type="text"
-                            placeholder="O'qituvchini qidirish..."
+                            placeholder={t('search_teacher')}
                             className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl w-full md:w-64 focus:ring-4 focus:ring-primary/10 transition-all shadow-sm outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -96,11 +99,11 @@ export const TotalsPage = () => {
                         <thead>
                             <tr className="bg-slate-50/80 backdrop-blur-md border-b border-slate-200">
                                 <th className="sticky left-0 z-20 bg-slate-50/80 backdrop-blur-md px-6 py-5 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px] w-12 border-r border-slate-200">#</th>
-                                <th className="sticky left-12 z-20 bg-slate-50/80 backdrop-blur-md px-6 py-5 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px] min-w-[300px] border-r border-slate-200">O'qituvchi ismi, sharifi</th>
+                                <th className="sticky left-12 z-20 bg-slate-50/80 backdrop-blur-md px-6 py-5 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px] min-w-[300px] border-r border-slate-200">{t('table_teacher')}</th>
 
                                 {selectedMonth === 'all' ? (
                                     <>
-                                        {MONTHS.map(month => (
+                                        {t('months').map((month: string) => (
                                             <th key={month} className="px-4 py-5 text-center text-slate-500 font-bold uppercase tracking-wider text-[10px] min-w-[100px]">
                                                 {month}
                                             </th>
@@ -109,14 +112,14 @@ export const TotalsPage = () => {
                                 ) : (
                                     <>
                                         <th className="px-6 py-5 text-center text-slate-500 font-bold uppercase tracking-wider text-[10px] min-w-[150px]">
-                                            {MONTHS[parseInt(selectedMonth)]} Ball
+                                            {t('months')[parseInt(selectedMonth)]} {t('table_avg_score')}
                                         </th>
                                         <th className="px-6 py-5 text-center text-slate-500 font-bold uppercase tracking-wider text-[10px] min-w-[150px]">
-                                            Ovozlar Soni
+                                            {t('table_vote_count')}
                                         </th>
                                     </>
                                 )}
-                                <th className="px-6 py-5 text-center text-primary font-black uppercase tracking-wider text-[10px] min-w-[120px] bg-primary/5 border-l border-slate-200">Yillik Jami</th>
+                                <th className="px-6 py-5 text-center text-primary font-black uppercase tracking-wider text-[10px] min-w-[120px] bg-primary/5 border-l border-slate-200">{t('table_yearly_total')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -125,7 +128,7 @@ export const TotalsPage = () => {
                                     <td colSpan={100} className="py-20 text-center">
                                         <div className="flex flex-col items-center justify-center gap-4">
                                             <Loader2 size={40} className="text-primary animate-spin" />
-                                            <p className="text-slate-400 font-medium">Ma'lumotlar yuklanmoqda...</p>
+                                            <p className="text-slate-400 font-medium">{t('loading_data')}</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -137,7 +140,7 @@ export const TotalsPage = () => {
                                 let totalCount = 0;
 
                                 // Calculate yearly totals
-                                MONTHS.forEach((_: string, mIndex: number) => {
+                                t('months').forEach((_: string, mIndex: number) => {
                                     totalSum += teacherStats[mIndex].sum;
                                     totalCount += teacherStats[mIndex].count;
                                 });
@@ -155,7 +158,7 @@ export const TotalsPage = () => {
                                         </td>
 
                                         {selectedMonth === 'all' ? (
-                                            MONTHS.map((_: string, mIndex: number) => {
+                                            t('months').map((_: string, mIndex: number) => {
                                                 const monthData = teacherStats[mIndex];
                                                 const avg = monthData.count > 0 ? (monthData.sum / monthData.count).toFixed(1) : '-';
 
@@ -210,15 +213,16 @@ export const TotalsPage = () => {
 
                 {filteredTeachers.length === 0 && (
                     <div className="py-20 text-center text-slate-400 italic bg-white/50 backdrop-blur-sm">
-                        Qidiruv bo'yicha ma'lumot topilmadi.
+                        {t('no_search_results')}
                     </div>
                 )}
             </div>
 
             <footer className="mt-8 text-slate-400 text-xs text-center flex items-center justify-center gap-2">
                 <FileSpreadsheet size={14} />
-                Ma'lumotlar avtomatik ravishda barcha sinflardan yig'ilgan
+                {t('footer_info')}
             </footer>
         </div>
     );
 };
+```

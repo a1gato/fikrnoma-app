@@ -1,70 +1,74 @@
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { CLASSES } from '../data/schoolData';
-import { LayoutGrid, GraduationCap, LogOut, FileSpreadsheet } from 'lucide-react';
+import { LayoutDashboard, BookOpen, ChevronRight, FileSpreadsheet } from 'lucide-react';
+
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const Sidebar = () => {
+    const { t } = useLanguage();
+    const location = useLocation();
+
     return (
-        <aside className="w-72 bg-white/70 backdrop-blur-xl border-r border-slate-200 h-screen flex flex-col fixed left-0 top-0 overflow-y-auto z-50 shadow-sm">
-            <header className="p-8 mb-4">
-                <div className="flex items-center gap-4 mb-2">
-                    <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-primary/40 rotate-3">
-                        <GraduationCap size={28} />
+        <aside className="w-80 h-screen bg-white/70 backdrop-blur-2xl border-r border-slate-200 flex flex-col sticky top-0 shadow-2xl shadow-primary/5">
+            <div className="p-8 border-b border-slate-100 bg-white/50">
+                <Link to="/admin" className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/30 group-hover:scale-110 transition-transform">
+                        <LayoutDashboard size={24} />
                     </div>
                     <div>
-                        <span className="text-2xl font-black text-slate-900 tracking-tighter block leading-none">ADMIN</span>
-                        <span className="text-[10px] text-primary font-black uppercase tracking-widest mt-1 block">Panel v1.0</span>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">{t('header_title')}</h2>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin Panel</span>
                     </div>
-                </div>
-            </header>
+                </Link>
+            </div>
 
-            <nav className="flex-1 px-4 space-y-2">
-                <div className="px-4 mb-2">
-                    <NavLink
+            <nav className="flex-1 overflow-y-auto px-4 py-8 space-y-8 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                {/* Main Links */}
+                <div className="space-y-1">
+                    <Link
                         to="/admin/totals"
-                        className={({ isActive }) =>
-                            `flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative overflow-hidden ${isActive
-                                ? 'bg-primary text-white shadow-xl shadow-primary/20'
-                                : 'text-slate-500 hover:bg-slate-50 hover:text-primary border border-transparent hover:border-primary/20'
-                            }`
-                        }
+                        className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all group ${location.pathname === '/admin/totals' || location.pathname === '/admin'
+                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                            : 'text-slate-500 hover:bg-slate-50 hover:text-primary'
+                            }`}
                     >
-                        <FileSpreadsheet size={18} className="transition-transform group-hover:scale-110" />
-                        <span className="font-bold tracking-tight text-sm">Jami Ko'rsatkichlar</span>
-                    </NavLink>
+                        <FileSpreadsheet size={20} className={location.pathname === '/admin/totals' ? 'text-white' : 'text-slate-400 group-hover:text-primary'} />
+                        {t('sidebar_totals')}
+                    </Link>
                 </div>
 
-                <div className="px-4 mb-4 text-center">
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest px-1 mb-4 opacity-50">Sinfni Tanlang</p>
-                    <div className="h-px bg-slate-100"></div>
-                </div>
-
-                <div className="space-y-1 max-h-[calc(100vh-250px)] overflow-y-auto pr-2 scrollbar-none">
-                    {CLASSES.map((cls) => (
-                        <NavLink
-                            key={cls}
-                            to={`/admin/class/${cls}`}
-                            className={({ isActive }) =>
-                                `flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group relative overflow-hidden ${isActive
-                                    ? 'bg-primary text-white shadow-xl shadow-primary/20'
-                                    : 'text-slate-400 hover:bg-slate-50 hover:text-primary'
-                                }`
-                            }
-                        >
-                            <LayoutGrid size={18} className="transition-transform group-hover:scale-110" />
-                            <span className="font-bold tracking-tight text-sm">Sinf {cls}</span>
-                        </NavLink>
-                    ))}
+                {/* Classes Section */}
+                <div>
+                    <h3 className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <BookOpen size={12} />
+                        {t('sidebar_classes')}
+                    </h3>
+                    <div className="space-y-1">
+                        {CLASSES.map((cls) => (
+                            <Link
+                                key={cls}
+                                to={`/admin/class/${cls}`}
+                                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all group ${location.pathname === `/admin/class/${cls}`
+                                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                                    : 'text-slate-600 hover:bg-slate-50 hover:text-primary'
+                                    }`}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-2 h-2 rounded-full ${location.pathname === `/admin/class/${cls}` ? 'bg-primary' : 'bg-slate-200 group-hover:bg-primary'}`} />
+                                    {cls} {t('select_class_view')}
+                                </div>
+                                <ChevronRight size={14} className={location.pathname === `/admin/class/${cls}` ? 'text-primary' : 'opacity-0 group-hover:opacity-100 text-primary transition-all'} />
+                            </Link>
+                        ))}
+                    </div>
                 </div>
             </nav>
 
-            <div className="p-6 mt-auto">
-                <NavLink
-                    to="/"
-                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/50 hover:bg-slate-50 transition-all duration-300 group shadow-sm"
-                >
-                    <LogOut size={18} />
-                    <span className="font-bold text-sm tracking-tight text-slate-900">Ovoz Berishga Qaytish</span>
-                </NavLink>
+            <div className="p-6 border-t border-slate-100 bg-slate-50/50">
+                <Link to="/vote" className="flex items-center justify-center gap-2 w-full py-4 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 hover:border-primary hover:text-primary transition-all font-bold text-sm group">
+                    <ChevronRight size={16} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+                    {t('back_to_vote')}
+                </Link>
             </div>
         </aside>
     );

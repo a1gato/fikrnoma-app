@@ -5,7 +5,10 @@ import type { ClassName } from '../data/schoolData';
 import { RatingService } from '../services/ratingService';
 import { Star, User, BookOpen, MessageSquare, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 export const ClassRatings = () => {
+    const { t } = useLanguage();
     const { className } = useParams<{ className: string }>();
     const [expandedTeacher, setExpandedTeacher] = useState<string | null>(null);
     const [teacherStats, setTeacherStats] = useState<any[]>([]);
@@ -43,7 +46,7 @@ export const ClassRatings = () => {
     }, [cls]);
 
     if (!cls || !TEACHERS_BY_CLASS[cls]) {
-        return <div className="p-8 text-center text-muted">Select a class to view ratings</div>;
+        return <div className="p-8 text-center text-muted">{t('select_class_view')}</div>;
     }
 
     const teachers = TEACHERS_BY_CLASS[cls];
@@ -53,28 +56,25 @@ export const ClassRatings = () => {
     };
 
     return (
-        <div className="p-8 max-w-6xl mx-auto animate-fade-in font-sans">
-            <header className="mb-8 flex justify-between items-center">
-                <div>
-                    <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tight">Sinf {cls}</h1>
-                    <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">O'qituvchilar ko'rsatkichlari</p>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm px-5 py-3 rounded-2xl text-sm text-slate-500 border border-slate-200 flex items-center gap-3 shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    Jami o'qituvchilar: <span className="text-slate-900 font-bold">{teachers.length}</span>
-                </div>
+        <div className="p-8 max-w-[1200px] mx-auto animate-fade-in font-sans">
+            <header className="mb-10">
+                <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tight flex items-center gap-3">
+                    <BookOpen className="text-primary" size={40} />
+                    {cls} {t('sidebar_classes')}
+                </h1>
+                <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">{t('student_feedback')}</p>
             </header>
 
-            <div className="glass-panel overflow-hidden border-slate-200 shadow-xl bg-white/40">
-                <table className="w-full">
+            <div className="glass-panel overflow-hidden border-slate-200 shadow-2xl bg-white shadow-primary/5">
+                <table className="w-full border-collapse">
                     <thead>
-                        <tr className="bg-slate-50/50 backdrop-blur-md">
-                            <th className="w-16 px-6 py-4">#</th>
-                            <th className="px-6 py-4">O'qituvchi</th>
-                            <th className="px-6 py-4">Fan</th>
-                            <th className="px-6 py-4 text-right">O'rtacha ball</th>
-                            <th className="px-6 py-4 text-right">Ovozlar</th>
-                            <th className="w-16 px-6 py-4"></th>
+                        <tr className="bg-slate-50/50 border-b border-slate-200">
+                            <th className="px-6 py-4 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px] w-12">#</th>
+                            <th className="px-6 py-4 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px]">{t('table_teacher')}</th>
+                            <th className="px-6 py-4 text-left text-slate-500 font-bold uppercase tracking-wider text-[10px]">{t('subject')}</th>
+                            <th className="px-6 py-4 text-center text-slate-500 font-bold uppercase tracking-wider text-[10px] w-32">{t('table_avg_score')}</th>
+                            <th className="px-6 py-4 text-right text-slate-500 font-bold uppercase tracking-wider text-[10px] w-32">{t('table_vote_count')}</th>
+                            <th className="px-6 py-4 text-right text-slate-500 font-bold uppercase tracking-wider text-[10px] w-20"></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -83,7 +83,7 @@ export const ClassRatings = () => {
                                 <td colSpan={6} className="py-20 text-center">
                                     <div className="flex flex-col items-center justify-center gap-4">
                                         <Loader2 size={40} className="text-primary animate-spin" />
-                                        <p className="text-slate-400 font-medium">Ma'lumotlar yuklanmoqda...</p>
+                                        <p className="text-slate-400 font-medium">{t('loading_data')}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -92,31 +92,28 @@ export const ClassRatings = () => {
                                 <React.Fragment key={teacher.id}>
                                     <tr
                                         onClick={() => toggleExpand(teacher.id)}
-                                        className={`group cursor-pointer transition-all duration-300 ${expandedTeacher === teacher.id ? 'bg-primary/5' : 'hover:bg-slate-50'}`}
+                                        className="hover:bg-slate-50 transition-all cursor-pointer group"
                                     >
                                         <td className="px-6 py-5 text-slate-400 font-mono text-sm">{index + 1}</td>
-                                        <td className="px-6 py-5 font-bold text-slate-900">
-                                            <div className="flex items-center gap-4">
-                                                <div className={`p-2.5 rounded-2xl transition-all duration-500 ${expandedTeacher === teacher.id ? 'bg-primary text-white rotate-12 shadow-lg shadow-primary/20' : 'bg-slate-100 text-slate-400 group-hover:scale-110 group-hover:text-primary group-hover:bg-primary/10'}`}>
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
                                                     <User size={18} />
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-lg tracking-tight">{teacher.name}</span>
-                                                </div>
+                                                <span className="font-bold text-slate-900 text-lg">{teacher.name}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-5">
-                                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-bold border border-slate-200">
-                                                <BookOpen size={12} />
-                                                {teacher.subject}
+                                            <span className="text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-lg text-sm group-hover:bg-white transition-all">
+                                                {t('subject')}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-5 text-right">
-                                            <div className="flex items-center justify-end gap-2.5">
-                                                <span className={`text-xl font-black ${teacher.average >= 4.5 ? 'text-green-600' :
-                                                    teacher.average >= 3.5 ? 'text-blue-600' :
-                                                        teacher.average >= 2.5 ? 'text-yellow-600' :
-                                                            teacher.average > 0 ? 'text-red-500' : 'text-slate-300'
+                                        <td className="px-6 py-5 text-center">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <span className={`text-xl font-black ${teacher.average >= 4.5 ? 'text-emerald-600' :
+                                                        teacher.average >= 3.5 ? 'text-blue-600' :
+                                                            teacher.average >= 2.5 ? 'text-amber-600' :
+                                                                teacher.average > 0 ? 'text-rose-600' : 'text-slate-200'
                                                     }`}>
                                                     {teacher.average > 0 ? teacher.average.toFixed(1) : '-'}
                                                 </span>
@@ -141,7 +138,7 @@ export const ClassRatings = () => {
                                                     <div className="flex items-center justify-between">
                                                         <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-3">
                                                             <MessageSquare size={16} className="text-primary" />
-                                                            O'quvchilar fikrlari ({teacher.ratings.length})
+                                                            {t('student_feedback')} ({teacher.ratings.length})
                                                         </h4>
                                                     </div>
 

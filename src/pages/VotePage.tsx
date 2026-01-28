@@ -6,7 +6,10 @@ import { RatingService } from '../services/ratingService';
 import { Star, Send, CheckCircle, UserCircle, Loader2 } from 'lucide-react';
 import { CustomSelect } from '../components/CustomSelect';
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 export const VotePage: React.FC = () => {
+    const { t } = useLanguage();
     const { classCode } = useParams<{ classCode: string }>();
     const [selectedClass, setSelectedClass] = useState<ClassName | ''>((classCode as ClassName) || '');
     const [studentName, setStudentName] = useState('');
@@ -66,13 +69,13 @@ export const VotePage: React.FC = () => {
                     <div className="bg-success/20 p-4 rounded-full mb-6">
                         <CheckCircle className="text-success w-16 h-16" />
                     </div>
-                    <h2 className="text-3xl font-black mb-3 text-slate-900">Raxmat!</h2>
-                    <p className="text-slate-500 text-lg">Sizning fikringiz qabul qilindi.</p>
+                    <h2 className="text-3xl font-black mb-3 text-slate-900">{t('success_title')}</h2>
+                    <p className="text-slate-500 text-lg">{t('success_message')}</p>
                     <button
                         onClick={() => setSubmitted(false)}
                         className="mt-8 text-sm text-primary hover:underline font-medium"
                     >
-                        Yana bir bor topshirish
+                        {t('resubmit_button')}
                     </button>
                 </div>
             </div>
@@ -84,13 +87,13 @@ export const VotePage: React.FC = () => {
             <div className="max-w-3xl mx-auto">
                 <header className="mb-12 text-center animate-fade-up">
                     <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold mb-6">
-                        SCHOOL FEEDBACK SYSTEM
+                        {t('system_name')}
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-                        {selectedClass ? `${selectedClass}-Sinf Fikrnoma` : "Sinfingizni tanlang"}
+                        {selectedClass ? `${selectedClass}-${t('select_class_view')}` : t('select_class')}
                     </h1>
                     <p className="text-slate-400 text-lg max-w-lg mx-auto">
-                        O'qituvchilar haqida o'z fikringizni bildiring. Javoblar maxfiy qoladi.
+                        {t('header_subtitle')}
                     </p>
                 </header>
 
@@ -99,8 +102,8 @@ export const VotePage: React.FC = () => {
                     {!classCode && (
                         <div className="glass-panel p-6 md:p-8">
                             <CustomSelect
-                                label="1. Sinfingizni tanlang"
-                                placeholder="Tanlang..."
+                                label={t('step_1_label')}
+                                placeholder={t('step_1_placeholder')}
                                 options={classOptions}
                                 value={selectedClass}
                                 onChange={(val) => {
@@ -117,11 +120,11 @@ export const VotePage: React.FC = () => {
                             <div className="glass-panel p-6 md:p-8 space-y-4">
                                 <label className="flex items-center gap-2 text-sm font-bold text-slate-400 uppercase tracking-wider">
                                     <UserCircle size={18} className="text-primary" />
-                                    2. Ism Familyangizni yozing
+                                    {t('step_2_label')}
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Ismingiz..."
+                                    placeholder={t('step_2_placeholder')}
                                     className="w-full student-input rounded-xl outline-none text-slate-900 font-medium"
                                     value={studentName}
                                     onChange={(e) => setStudentName(e.target.value)}
@@ -133,7 +136,7 @@ export const VotePage: React.FC = () => {
                             <div className="space-y-6">
                                 <h2 className="text-xl font-bold px-2 flex items-center gap-3">
                                     <span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm">3</span>
-                                    O'qituvchilarni baholang
+                                    {t('step_3_label')}
                                 </h2>
 
                                 {teachers.map((teacher: any) => (
@@ -141,12 +144,12 @@ export const VotePage: React.FC = () => {
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <h3 className="text-xl font-bold text-slate-900">{teacher.name}</h3>
-                                                <span className="text-sm text-primary font-bold uppercase tracking-wider">{teacher.subject}</span>
+                                                <span className="text-sm text-primary font-bold uppercase tracking-wider">{t('subject')}</span>
                                             </div>
                                         </div>
 
                                         <div className="space-y-4">
-                                            <p className="text-sm text-slate-400 italic">Dars o'tilishi haqidagi fikrlaringizni kiriting:</p>
+                                            <p className="text-sm text-slate-400 italic">{t('teacher_evaluation_subtitle')}</p>
                                             <div className="flex justify-between items-center max-w-sm mx-auto">
                                                 {[1, 2, 3, 4, 5].map((star: number) => (
                                                     <div key={star} className="flex flex-col items-center gap-2">
@@ -169,10 +172,10 @@ export const VotePage: React.FC = () => {
                                         </div>
 
                                         <div className="space-y-4">
-                                            <p className="text-sm text-slate-400 italic">Qo'shimcha fikr va mulohazalaringiz:</p>
+                                            <p className="text-sm text-slate-400 italic">{t('additional_comments')}</p>
                                             <textarea
                                                 className="w-full student-input rounded-xl outline-none min-h-[100px] resize-none text-slate-900"
-                                                placeholder="Bu yerga yozing..."
+                                                placeholder={t('comment_placeholder')}
                                                 value={comments[teacher.id] || ''}
                                                 onChange={(e) => handleCommentChange(teacher.id, e.target.value)}
                                             />
@@ -188,10 +191,10 @@ export const VotePage: React.FC = () => {
                                     className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 shadow-2xl disabled:opacity-30 disabled:grayscale transition-all"
                                 >
                                     {submitting ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}
-                                    <span className="text-xl font-black uppercase tracking-widest">{submitting ? "Yuborilmoqda..." : "Yuborish"}</span>
+                                    <span className="text-xl font-black uppercase tracking-widest">{submitting ? t('submitting_button') : t('submit_button')}</span>
                                 </button>
                                 <p className="text-center text-slate-500 text-sm mt-4">
-                                    Barcha o'qituvchilarni baholash tavsiya etiladi.
+                                    {t('submit_recommendation')}
                                 </p>
                             </div>
                         </form>
