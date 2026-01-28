@@ -50,7 +50,7 @@ export const RatingService = {
     },
 
     submitRatings: async (ratings: { teacherId: string; className: any; score: number; studentName?: string; comment?: string }[]) => {
-        const { error } = await supabase
+        await supabase
             .from('ratings')
             .insert(ratings.map(r => ({
                 teacher_id: r.teacherId,
@@ -59,11 +59,6 @@ export const RatingService = {
                 student_name: r.studentName,
                 comment: r.comment
             })));
-
-        if (error) {
-            console.error('Error submitting batch ratings:', error);
-            throw error;
-        }
     },
 
     getTeacherAverage: async (teacherId: string): Promise<number> => {

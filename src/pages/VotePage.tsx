@@ -38,22 +38,23 @@ export const VotePage: React.FC = () => {
                     await RatingService.submitRatings(batchData);
                 }
 
+                // Instant transition to success screen
+                setSubmitting(false);
                 setSubmitted(true);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'instant' });
 
+                // Reset state after 3 seconds instead of 5
                 setTimeout(() => {
                     setSubmitted(false);
                     setRatings({});
                     setComments({});
                     setStudentName('');
                     setSelectedClass('');
-                }, 5000);
+                }, 3000);
             } catch (error) {
+                setSubmitting(false);
                 console.error('General submission error:', error);
                 alert("Xatolik yuz berdi. Iltimos qaytadan urunib ko'ring.");
-            } finally {
-                console.log('Submission process ended');
-                setSubmitting(false);
             }
         }
     };
