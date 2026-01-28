@@ -100,7 +100,7 @@ export const VotePage: React.FC = () => {
                 <div className="space-y-8 animate-fade-up">
                     {/* STEP 1: CLASS SELECTION - Only show if not in URL */}
                     {!classCode && (
-                        <div className="glass-panel p-6 md:p-8">
+                        <div className="glass-panel p-6 md:p-8 relative z-10">
                             <CustomSelect
                                 label={t('step_1_label')}
                                 placeholder={t('step_1_placeholder')}

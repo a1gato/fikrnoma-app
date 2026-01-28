@@ -61,7 +61,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-full min-w-[240px] bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-fade-up max-h-[300px] flex flex-col">
+                <div className="absolute top-full left-0 mt-2 w-full min-w-[240px] bg-white border border-slate-200 rounded-2xl shadow-2xl z-[100] overflow-hidden animate-fade-up max-h-[300px] flex flex-col">
                     <div className="p-3 border-b border-slate-100 sticky top-0 bg-white/50 backdrop-blur-md">
                         <div className="relative">
                             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
