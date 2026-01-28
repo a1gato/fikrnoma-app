@@ -4,11 +4,6 @@ import { RatingService } from '../services/ratingService';
 import { CustomSelect } from '../components/CustomSelect';
 import { Search, Calendar, ChevronLeft, ChevronRight, FileSpreadsheet, Star, User, Loader2 } from 'lucide-react';
 
-const MONTHS = [
-    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-    'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'
-];
-
 import { useLanguage } from '../contexts/LanguageContext';
 
 export const TotalsPage = () => {
@@ -132,7 +127,7 @@ export const TotalsPage = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            ) : filteredTeachers.map((name: string, index: number) => {
+                            ) : filteredTeachers.map((name, index) => {
                                 const teacherStats = stats?.[name];
                                 if (!teacherStats) return null;
 
@@ -145,15 +140,17 @@ export const TotalsPage = () => {
                                     totalCount += teacherStats[mIndex].count;
                                 });
 
+                                const yearlyAvg = totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '-';
+
                                 return (
-                                    <tr key={name} className="hover:bg-primary/5 transition-colors group">
-                                        <td className="sticky left-0 z-10 bg-white/90 backdrop-blur-sm group-hover:bg-slate-50/90 px-6 py-5 text-slate-400 font-mono text-sm border-r border-slate-100">{index + 1}</td>
-                                        <td className="sticky left-12 z-10 bg-white/90 backdrop-blur-sm group-hover:bg-slate-50/90 px-6 py-5 font-bold text-slate-900 border-r border-slate-100">
+                                    <tr key={name} className="hover:bg-primary/5 transition-all group border-b border-slate-50">
+                                        <td className="sticky left-0 z-10 bg-white/80 group-hover:bg-white backdrop-blur-md px-6 py-5 text-slate-400 font-mono text-xs border-r border-slate-50">{index + 1}</td>
+                                        <td className="sticky left-12 z-10 bg-white/80 group-hover:bg-white backdrop-blur-md px-6 py-5 border-r border-slate-50">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
                                                     <User size={14} />
                                                 </div>
-                                                {name}
+                                                <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">{name}</span>
                                             </div>
                                         </td>
 
@@ -167,7 +164,7 @@ export const TotalsPage = () => {
                                                         <span className={`text-sm font-bold ${avg === '-' ? 'text-slate-200' :
                                                             parseFloat(avg) >= 4.5 ? 'text-emerald-600' :
                                                                 parseFloat(avg) >= 3.5 ? 'text-blue-600' :
-                                                                    parseFloat(avg) >= 2.5 ? 'text-amber-600' : 'text-rose-600'
+                                                                    'text-amber-600'
                                                             }`}>
                                                             {avg}
                                                         </span>
@@ -180,30 +177,23 @@ export const TotalsPage = () => {
                                                     <div className="flex items-center justify-center gap-2">
                                                         <span className={`text-lg font-black ${teacherStats[parseInt(selectedMonth)].count === 0 ? 'text-slate-200' :
                                                             (teacherStats[parseInt(selectedMonth)].sum / teacherStats[parseInt(selectedMonth)].count) >= 4.5 ? 'text-emerald-600' :
-                                                                (teacherStats[parseInt(selectedMonth)].sum / teacherStats[parseInt(selectedMonth)].count) >= 3.5 ? 'text-blue-600' :
-                                                                    (teacherStats[parseInt(selectedMonth)].sum / teacherStats[parseInt(selectedMonth)].count) >= 2.5 ? 'text-amber-600' : 'text-rose-600'
+                                                                'text-blue-600'
                                                             }`}>
                                                             {teacherStats[parseInt(selectedMonth)].count > 0
                                                                 ? (teacherStats[parseInt(selectedMonth)].sum / teacherStats[parseInt(selectedMonth)].count).toFixed(1)
                                                                 : '-'}
                                                         </span>
-                                                        {teacherStats[parseInt(selectedMonth)].count > 0 && <Star size={14} className="text-amber-400 fill-amber-400" />}
+                                                        {teacherStats[parseInt(selectedMonth)].count > 0 && <Star size={14} className="text-yellow-500" fill="currentColor" />}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-5 text-center">
-                                                    <span className={`px-3 py-1 rounded-full text-sm font-bold ${teacherStats[parseInt(selectedMonth)].count > 0 ? 'bg-slate-100 text-slate-600 border border-slate-200' : 'text-slate-200'
-                                                        }`}>
+                                                    <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-600">
                                                         {teacherStats[parseInt(selectedMonth)].count}
                                                     </span>
                                                 </td>
                                             </>
                                         )}
-
-                                        <td className="px-6 py-5 text-center bg-primary/5 border-l border-slate-100">
-                                            <span className="text-lg font-black text-primary">
-                                                {totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '-'}
-                                            </span>
-                                        </td>
+                                        <td className="px-6 py-5 text-center bg-primary/5 font-black text-primary border-l border-slate-50">{yearlyAvg}</td>
                                     </tr>
                                 );
                             })}

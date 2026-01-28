@@ -18,14 +18,14 @@ export const ClassRatings = () => {
     useEffect(() => {
         const fetchRatings = async () => {
             if (!cls || !TEACHERS_BY_CLASS[cls]) {
-                setTeacherStats([]); // Clear stats if class is invalid
+                setTeacherStats([]);
                 setLoading(false);
                 return;
             }
             setLoading(true);
-            const teachers = TEACHERS_BY_CLASS[cls];
+            const teachersData = TEACHERS_BY_CLASS[cls];
 
-            const statsPromises = teachers.map(async t => {
+            const statsPromises = teachersData.map(async t => {
                 const ratings = await RatingService.getTeacherRatings(t.id);
                 const sum = ratings.reduce((acc, r) => acc + r.score, 0);
                 const average = ratings.length > 0 ? sum / ratings.length : 0;
@@ -48,8 +48,6 @@ export const ClassRatings = () => {
     if (!cls || !TEACHERS_BY_CLASS[cls]) {
         return <div className="p-8 text-center text-muted">{t('select_class_view')}</div>;
     }
-
-    const teachers = TEACHERS_BY_CLASS[cls];
 
     const toggleExpand = (teacherId: string) => {
         setExpandedTeacher(expandedTeacher === teacherId ? null : teacherId);
@@ -144,9 +142,9 @@ export const ClassRatings = () => {
 
                                                     {teacher.ratings.length > 0 ? (
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {teacher.ratings.filter((r: any) => r.comment).map((r: any, i: number) => (
-                                                                <div key={i} className="flex gap-4 p-5 rounded-2xl bg-white border border-slate-100 group/comment transition-all hover:border-primary/20 hover:shadow-md hover:shadow-primary/5" style={{ animationDelay: `${i * 0.05}s` }}>
-                                                                    <div className="flex justify-between items-start mb-3">
+                                                            {teacher.ratings.map((r: any, i: number) => (
+                                                                <div key={i} className="flex flex-col gap-2 p-5 rounded-2xl bg-white border border-slate-100 group/comment transition-all hover:border-primary/20 hover:shadow-md hover:shadow-primary/5" style={{ animationDelay: `${i * 0.05}s` }}>
+                                                                    <div className="flex justify-between items-start mb-1">
                                                                         <div className="flex gap-1">
                                                                             {[1, 2, 3, 4, 5].map(s => (
                                                                                 <Star key={s} size={10} className={r.score >= s ? "text-yellow-500" : "text-slate-200"} fill={r.score >= s ? "currentColor" : "none"} />

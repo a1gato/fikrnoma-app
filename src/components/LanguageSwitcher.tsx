@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Language } from '../lib/translations';
+import { type Language } from '../lib/translations';
 import { Globe } from 'lucide-react';
 
 export const LanguageSwitcher: React.FC = () => {
