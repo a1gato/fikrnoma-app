@@ -58,7 +58,7 @@ export const ClassRatings = () => {
             <header className="mb-10">
                 <h1 className="text-4xl font-black text-slate-900 mb-2 tracking-tight flex items-center gap-3">
                     <BookOpen className="text-primary" size={40} />
-                    {cls} {t('sidebar_classes')}
+                    {cls}
                 </h1>
                 <p className="text-slate-500 font-medium tracking-wide uppercase text-xs">{t('student_feedback')}</p>
             </header>
@@ -103,15 +103,15 @@ export const ClassRatings = () => {
                                         </td>
                                         <td className="px-6 py-5">
                                             <span className="text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-lg text-sm group-hover:bg-white transition-all">
-                                                {t('subject')}
+                                                {teacher.subject}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             <div className="flex items-center justify-center gap-2">
                                                 <span className={`text-xl font-black ${teacher.average >= 4.5 ? 'text-emerald-600' :
-                                                        teacher.average >= 3.5 ? 'text-blue-600' :
-                                                            teacher.average >= 2.5 ? 'text-amber-600' :
-                                                                teacher.average > 0 ? 'text-rose-600' : 'text-slate-200'
+                                                    teacher.average >= 3.5 ? 'text-blue-600' :
+                                                        teacher.average >= 2.5 ? 'text-amber-600' :
+                                                            teacher.average > 0 ? 'text-rose-600' : 'text-slate-200'
                                                     }`}>
                                                     {teacher.average > 0 ? teacher.average.toFixed(1) : '-'}
                                                 </span>
