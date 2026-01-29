@@ -23,22 +23,24 @@ export const ClassRatings = () => {
                 return;
             }
             setLoading(true);
+
+            // Fetch all ratings for the class at once
+            const allRatings = await RatingService.getRatingsByClass(cls);
             const teachersData = TEACHERS_BY_CLASS[cls];
 
-            const statsPromises = teachersData.map(async t => {
-                const ratings = await RatingService.getTeacherRatings(t.id);
-                const sum = ratings.reduce((acc, r) => acc + r.score, 0);
-                const average = ratings.length > 0 ? sum / ratings.length : 0;
+            const stats = teachersData.map(t => {
+                const teacherRatings = allRatings.filter(r => r.teacherId === t.id);
+                const sum = teacherRatings.reduce((acc, r) => acc + r.score, 0);
+                const average = teacherRatings.length > 0 ? sum / teacherRatings.length : 0;
 
                 return {
                     ...t,
                     average,
-                    count: ratings.length,
-                    ratings: ratings.filter(r => r.comment)
+                    count: teacherRatings.length,
+                    ratings: teacherRatings.filter(r => r.comment)
                 };
             });
 
-            const stats = await Promise.all(statsPromises);
             setTeacherStats(stats.sort((a, b) => b.average - a.average));
             setLoading(false);
         };

@@ -4,21 +4,62 @@ import type { Rating } from '../data/schoolData';
 
 export const RatingService = {
     getAllRatings: async (): Promise<Rating[]> => {
-        // Automatic Pruning logic: Only fetch ratings from the last 30 days
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
-
         const { data, error } = await supabase
             .from('ratings')
             .select('*')
-            .gte('created_at', oneMonthAgo.toISOString());
+            .order('created_at', { ascending: false });
 
         if (error) {
             console.error('Error fetching ratings:', error);
             return [];
         }
 
-        // Map snake_case from DB to camelCase for the App
+        return data.map(r => ({
+            id: r.id,
+            teacherId: r.teacher_id,
+            studentName: r.student_name,
+            className: r.class_name,
+            score: r.score,
+            comment: r.comment,
+            timestamp: new Date(r.created_at).getTime()
+        }));
+    },
+
+    getRatingsByClass: async (className: string): Promise<Rating[]> => {
+        const { data, error } = await supabase
+            .from('ratings')
+            .select('*')
+            .eq('class_name', className)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error(`Error fetching ratings for class ${className}:`, error);
+            return [];
+        }
+
+        return data.map(r => ({
+            id: r.id,
+            teacherId: r.teacher_id,
+            studentName: r.student_name,
+            className: r.class_name,
+            score: r.score,
+            comment: r.comment,
+            timestamp: new Date(r.created_at).getTime()
+        }));
+    },
+
+    getRatingsByTeacher: async (teacherId: string): Promise<Rating[]> => {
+        const { data, error } = await supabase
+            .from('ratings')
+            .select('*')
+            .eq('teacher_id', teacherId)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error(`Error fetching ratings for teacher ${teacherId}:`, error);
+            return [];
+        }
+
         return data.map(r => ({
             id: r.id,
             teacherId: r.teacher_id,
@@ -62,21 +103,19 @@ export const RatingService = {
     },
 
     getTeacherAverage: async (teacherId: string): Promise<number> => {
-        const ratings = await RatingService.getAllRatings();
-        const teacherRatings = ratings.filter(r => r.teacherId === teacherId);
-        if (teacherRatings.length === 0) return 0;
-        const sum = teacherRatings.reduce((acc, r) => acc + r.score, 0);
-        return sum / teacherRatings.length;
+        const ratings = await RatingService.getRatingsByTeacher(teacherId);
+        if (ratings.length === 0) return 0;
+        const sum = ratings.reduce((acc, r) => acc + r.score, 0);
+        return sum / ratings.length;
     },
 
     getTeacherRatings: async (teacherId: string): Promise<Rating[]> => {
-        const ratings = await RatingService.getAllRatings();
-        return ratings.filter(r => r.teacherId === teacherId);
+        return RatingService.getRatingsByTeacher(teacherId);
     },
 
     getTeacherRatingCount: async (teacherId: string): Promise<number> => {
-        const ratings = await RatingService.getAllRatings();
-        return ratings.filter(r => r.teacherId === teacherId).length;
+        const ratings = await RatingService.getRatingsByTeacher(teacherId);
+        return ratings.length;
     },
 
     getUniqueTeachers: (teachersByClass: Record<string, any[]>): string[] => {
@@ -88,7 +127,20 @@ export const RatingService = {
     },
 
     getMonthlyTeacherStats: async (teachersByClass: Record<string, any[]>, year: number) => {
-        const ratings = await RatingService.getAllRatings();
+        // Fetch only required columns for the specific year
+        const startDate = `${year}-01-01T00:00:00Z`;
+        const endDate = `${year}-12-31T23:59:59Z`;
+
+        const { data: ratings, error } = await supabase
+            .from('ratings')
+            .select('teacher_id, score, created_at')
+            .gte('created_at', startDate)
+            .lte('created_at', endDate);
+
+        if (error) {
+            console.error('Error fetching yearly stats:', error);
+            return {};
+        }
 
         // Map all teacher IDs to their names for grouping
         const idToName: Record<string, string> = {};
@@ -108,15 +160,13 @@ export const RatingService = {
             }
         });
 
-        ratings.forEach(r => {
-            const date = new Date(r.timestamp);
-            if (date.getFullYear() === year) {
-                const name = idToName[r.teacherId];
-                if (name && stats[name]) {
-                    const month = date.getMonth();
-                    stats[name][month].sum += r.score;
-                    stats[name][month].count += 1;
-                }
+        ratings?.forEach(r => {
+            const date = new Date(r.created_at);
+            const name = idToName[r.teacher_id];
+            if (name && stats[name]) {
+                const month = date.getMonth();
+                stats[name][month].sum += r.score;
+                stats[name][month].count += 1;
             }
         });
 
