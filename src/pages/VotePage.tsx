@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { CLASSES, TEACHERS_BY_CLASS } from '../data/schoolData';
 import type { ClassName } from '../data/schoolData';
 import { RatingService } from '../services/ratingService';
+import { SchoolService, type Teacher } from '../services/schoolService';
 import { Star, Send, CheckCircle, UserCircle, Loader2 } from 'lucide-react';
 import { CustomSelect } from '../components/CustomSelect';
 
@@ -17,6 +17,20 @@ export const VotePage: React.FC = () => {
     const [comments, setComments] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [teachers, setTeachers] = useState<Teacher[]>([]);
+    const [classList, setClassList] = useState<string[]>([]);
+
+    useEffect(() => {
+        SchoolService.getClasses().then((classes) => setClassList(classes));
+    }, []);
+
+    useEffect(() => {
+        if (selectedClass) {
+            SchoolService.getTeachersByClass(selectedClass).then(setTeachers);
+        } else {
+            setTeachers([]);
+        }
+    }, [selectedClass]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -67,8 +81,7 @@ export const VotePage: React.FC = () => {
         setComments(prev => ({ ...prev, [teacherId]: comment }));
     };
 
-    const teachers = selectedClass ? TEACHERS_BY_CLASS[selectedClass] : [];
-    const classOptions = CLASSES.map((cls: string) => ({ value: cls, label: cls }));
+    const classOptions = classList.map((cls) => ({ value: cls, label: cls }));
 
     if (submitted) {
         return (
@@ -195,7 +208,13 @@ export const VotePage: React.FC = () => {
                             <div className="pt-8">
                                 <button
                                     type="submit"
-                                    disabled={Object.keys(ratings).length < teachers.length * 0.5 || !studentName || submitting}
+                                    disabled={
+                                        // Require every teacher to have a rating > 0 AND a non-empty comment
+                                        teachers.length === 0 ||
+                                        !teachers.every(t => (ratings[t.id] || 0) > 0 && (comments[t.id] || '').trim().length > 0) ||
+                                        !studentName ||
+                                        submitting
+                                    }
                                     className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 shadow-2xl disabled:opacity-30 disabled:grayscale transition-all"
                                 >
                                     {submitting ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { TEACHERS_BY_CLASS } from '../data/schoolData';
 import type { ClassName } from '../data/schoolData';
 import { RatingService } from '../services/ratingService';
+import { SchoolService } from '../services/schoolService';
 import { Star, User, BookOpen, MessageSquare, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
@@ -17,16 +17,24 @@ export const ClassRatings = () => {
 
     useEffect(() => {
         const fetchRatings = async () => {
-            if (!cls || !TEACHERS_BY_CLASS[cls]) {
+            if (!cls) {
                 setTeacherStats([]);
                 setLoading(false);
                 return;
             }
             setLoading(true);
 
-            // Fetch all ratings for the class at once
-            const allRatings = await RatingService.getRatingsByClass(cls);
-            const teachersData = TEACHERS_BY_CLASS[cls];
+            // Fetch all ratings for the class and teachers at once
+            const [allRatings, teachersData] = await Promise.all([
+                RatingService.getRatingsByClass(cls),
+                SchoolService.getTeachersByClass(cls)
+            ]);
+
+            if (teachersData.length === 0) {
+                setTeacherStats([]);
+                setLoading(false);
+                return;
+            }
 
             const stats = teachersData.map(t => {
                 const teacherRatings = allRatings.filter(r => r.teacherId === t.id);
@@ -47,7 +55,7 @@ export const ClassRatings = () => {
         fetchRatings();
     }, [cls]);
 
-    if (!cls || !TEACHERS_BY_CLASS[cls]) {
+    if (!cls) {
         return <div className="p-8 text-center text-muted">{t('select_class_view')}</div>;
     }
 

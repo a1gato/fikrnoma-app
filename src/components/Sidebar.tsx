@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { CLASSES } from '../data/schoolData';
+import { useState, useEffect } from 'react';
+import { SchoolService } from '../services/schoolService';
 import { LayoutDashboard, BookOpen, ChevronRight, FileSpreadsheet } from 'lucide-react';
 
 import { useLanguage } from '../contexts/LanguageContext';
@@ -7,6 +8,11 @@ import { useLanguage } from '../contexts/LanguageContext';
 export const Sidebar = () => {
     const { t } = useLanguage();
     const location = useLocation();
+    const [classes, setClasses] = useState<string[]>([]);
+
+    useEffect(() => {
+        SchoolService.getClasses().then(setClasses);
+    }, []);
 
     return (
         <aside className="w-80 h-screen bg-white/70 backdrop-blur-2xl border-r border-slate-200 flex flex-col sticky top-0 shadow-2xl shadow-primary/5">
@@ -44,7 +50,7 @@ export const Sidebar = () => {
                         {t('sidebar_classes')}
                     </h3>
                     <div className="space-y-1">
-                        {CLASSES.map((cls) => (
+                        {classes.map((cls) => (
                             <Link
                                 key={cls}
                                 to={`/admin/class/${cls}`}

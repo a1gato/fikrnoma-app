@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import type { Rating } from '../data/schoolData';
-
+import { SchoolService } from './schoolService';
 
 export const RatingService = {
     getAllRatings: async (): Promise<Rating[]> => {
@@ -118,22 +118,19 @@ export const RatingService = {
         return ratings.length;
     },
 
-    getUniqueTeachers: (teachersByClass: Record<string, any[]>): string[] => {
-        const names = new Set<string>();
-        Object.values(teachersByClass).forEach(teachers => {
-            teachers.forEach(t => names.add(t.name));
-        });
-        return Array.from(names).sort();
-    },
-
-    getMonthlyTeacherStats: async (teachersByClass: Record<string, any[]>, year: number) => {
+    getMonthlyTeacherStats: async (year: number) => {
         // Fetch only required columns for the specific year
         const startDate = `${year}-01-01T00:00:00Z`;
         const endDate = `${year}-12-31T23:59:59Z`;
 
         const { data: ratings, error } = await supabase
             .from('ratings')
-            .select('teacher_id, score, created_at')
+            .select(`
+                teacher_id, 
+                score, 
+                created_at,
+                teachers (name)
+            `)
             .gte('created_at', startDate)
             .lte('created_at', endDate);
 
@@ -142,16 +139,11 @@ export const RatingService = {
             return {};
         }
 
-        // Map all teacher IDs to their names for grouping
-        const idToName: Record<string, string> = {};
-        Object.values(teachersByClass).forEach(teachers => {
-            teachers.forEach(t => {
-                idToName[t.id] = t.name;
-            });
-        });
+        // Fetch all teachers to ensure everyone is in the list
+        const teachers = await SchoolService.getAllTeachers();
+        const uniqueNames = Array.from(new Set(teachers.map(t => t.name))).sort();
 
         const stats: Record<string, Record<number, { sum: number; count: number }>> = {};
-        const uniqueNames = RatingService.getUniqueTeachers(teachersByClass);
 
         uniqueNames.forEach(name => {
             stats[name] = {};
@@ -160,9 +152,15 @@ export const RatingService = {
             }
         });
 
-        ratings?.forEach(r => {
+        // Map ID to Name for fallback or direct lookup if needed
+        const idToName: Record<string, string> = {};
+        teachers.forEach(t => idToName[t.id] = t.name);
+
+        ratings?.forEach((r: any) => {
             const date = new Date(r.created_at);
-            const name = idToName[r.teacher_id];
+            // Use joined name if available, else lookup
+            const name = r.teachers?.name || idToName[r.teacher_id];
+
             if (name && stats[name]) {
                 const month = date.getMonth();
                 stats[name][month].sum += r.score;
